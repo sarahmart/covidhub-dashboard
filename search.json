@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "forecast.html",
+    "href": "forecast.html",
+    "title": "COVID-19 Forecast Hub Dashboard",
+    "section": "",
+    "text": "this is replaced"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Multi-Disease Forecast Evaluation Dashboard",
+    "section": "",
+    "text": "This dashboard tracks and evaluates Google’s predictive model performance for COVID-19, RSV, and Influenza across the 2025/26 season (November ’25 to May ’26).\nSource code for this dashboard was originally inspired by the Reich Lab at UMass, Amherst. The target data for the three forecast hubs is hospitalizations due to each infection as reported to the National Healthcare Safety Network (NHSN), publicly available through the CDC.\n\nModel Evaluations\nBelow you can explore the mean Weighted Interval Score (WIS) partitioned by forecast horizon for each disease. Lower WIS indicates higher forecast accuracy.\n\nCOVID-19Influenza (Flu)RSV\n\n\n\nForecast Horizon Evaluation (WIS)\n\n\n\nCOVID-19 Mean WIS by Horizon\n\n\n📥 Download Raw Data: COVID-19 WIS Table\n\n\n\n\nForecast Horizon Evaluation (WIS)\n\n\n\nFlu Mean WIS by Horizon\n\n\n📥 Download Raw Data: Flu WIS Table\n\n\n\n\nForecast Horizon Evaluation (WIS)\n\n\n\nRSV Mean WIS by Horizon\n\n\n📥 Download Raw Data: RSV WIS Table\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nData Context: The CDC notes that data for reporting dates beginning November 1, 2024 represent data reported during a mandated reporting period, whereas preceding months represent voluntarily reported data. Two reference dates substantively impacted by NHSN reporting issues (2024-11-23 and 2025-01-25) have been marked as excluded from the core evaluation window."
+  },
+  {
+    "objectID": "eval.html",
+    "href": "eval.html",
+    "title": "COVID-19 Forecast Hub Dashboard",
+    "section": "",
+    "text": "this is replaced"
+  }
+]
