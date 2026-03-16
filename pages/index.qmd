@@ -5,8 +5,8 @@ title: "Introduction"
 This is a dashboard for Google's COVID-19, RSV and Influenza predictions for the 2025/26 season (November '25 to May '26).
 
 Source code for this dashboard was taken and adapted from the [Reich Lab](https://reichlab.io/) at UMass, Amherst, 
-who maintain current [FluSight Forecast Hub](https://reichlab.io/flusight-dashboard/) and 
-[COVID-19 Forecast Hub](https://reichlab.io/covidhub-dashboard/) dashboards for the models submitting to the CDC's 
+who maintain current [FluSight Forecast Hub Dashboard](https://reichlab.io/flusight-dashboard/) and 
+[COVID-19 Forecast Hub Dashboard](https://reichlab.io/covidhub-dashboard/) for the models submitting to the CDC's 
 [Flusight Forecast Hub](https://github.com/cdcepi/FluSight-forecast-hub) and 
 [COVID-19 Forecast Hub](https://github.com/CDCgov/covid19-forecast-hub), respectively.
 
