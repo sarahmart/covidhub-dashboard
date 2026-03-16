@@ -23,14 +23,14 @@ HUB_TARGETS = {
         "data_file": "time-series.parquet",
     },
     "rsv": {
-        "repo_url": "https://github.com/FluSight-Forecast-Hub/rsv-forecast-hub.git",
+        "repo_url": "https://github.com/CDCgov/rsv-forecast-hub.git",
         "target_path": "target-data",
         "data_file": "time-series.parquet",
     },
     "flu": {
-        "repo_url": "https://github.com/FluSight-Forecast-Hub/flu-forecast-hub.git",
+        "repo_url": "https://github.com/cdcepi/FluSight-forecast-hub.git",
         "target_path": "target-data",
-        "data_file": "time-series.parquet",
+        "data_file": "time-series.csv", # or target-hospital-admissions.csv ? 
     },
 }
 
@@ -97,14 +97,21 @@ class TargetDataFetcher:
         # Ensure the repository is available
         self._ensure_repo(disease, hub_config)
 
-        # Load the parquet file
+        # Load the data file (csv [old, only for flu and they will likely soon move away] or parquet)
         data_path = repo_dir / hub_config["target_path"] / hub_config["data_file"]
 
         if not data_path.exists():
             raise FileNotFoundError(f"Target data file not found: {data_path}")
 
         logger.info(f"Loading target data from {data_path}")
-        df = pd.read_parquet(data_path)
+        
+        # Read file based on extension
+        if data_path.suffix.lower() == ".csv":
+            df = pd.read_csv(data_path)
+        elif data_path.suffix.lower() == ".parquet":
+            df = pd.read_parquet(data_path)
+        else:
+            raise ValueError(f"Unsupported file format: {data_path.suffix}")
 
         # Standardize column names and types
         df = self._standardize_data(df, disease)
@@ -140,7 +147,7 @@ class TargetDataFetcher:
         Parameters
         ----------
         df : pd.DataFrame
-            Raw parquet data from hub.
+            Raw data from hub.
         disease : str
             Disease identifier for context.
 
@@ -149,11 +156,48 @@ class TargetDataFetcher:
         pd.DataFrame
             Standardized dataframe with required columns.
         """
-        # Ensure required columns exist
+        # Map column names by disease (handle different hub formats)
+        column_mapping = {
+            "covid": {
+                "date": "date",
+                "location": "location",
+                "observation": "observation",
+                "target": "target",
+            },
+            "rsv": {
+                "date": "date",
+                "location": "location",
+                "observation": "observation",
+                "target": "target",
+            },
+            "flu": {
+                "date": "target_end_date",  # Flu uses target_end_date (week ending date)
+                "location": "location",
+                "observation": "observation",  # Flu also uses observation
+                "target": "target",
+            },
+        }
+        
+        mapping = column_mapping.get(disease)
+        if not mapping:
+            raise ValueError(f"Unknown disease: {disease}")
+        
+        # Rename columns to standard names
+        rename_dict = {}
+        for standard_col, actual_col in mapping.items():
+            if actual_col in df.columns:
+                rename_dict[actual_col] = standard_col
+        
+        df = df.rename(columns=rename_dict)
+        
+        # Check required columns exist
         required_cols = ["date", "location", "observation", "target"]
-        for col in required_cols:
-            if col not in df.columns:
-                raise ValueError(f"Missing required column '{col}' in {disease} target data")
+        missing = [col for col in required_cols if col not in df.columns]
+        if missing:
+            raise ValueError(
+                f"Missing required columns {missing} in {disease} target data. "
+                f"Available columns: {df.columns.tolist()}"
+            )
 
         # Convert date to datetime
         if df["date"].dtype != "datetime64[ns]":
