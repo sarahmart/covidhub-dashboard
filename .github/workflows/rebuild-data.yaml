@@ -66,15 +66,34 @@ jobs:
 
   site:
     needs: fetch-google-research-data
-    uses: hubverse-org/hub-dashboard-control-room/.github/workflows/generate-data.yaml@main
-    with:
-      owner: '${{ github.event.repository.owner.login }}'
-      name: '${{ github.event.repository.name }}'
-      slug: '${{ github.event.repository.owner.login }}'
-      email: '${{ github.event.repository.owner.id }}+${{ github.event.repository.owner.login }}@users.noreply.github.com'
-      regenerate: ${{ inputs.regenerate || false }}
-      build: ${{ inputs.data || 'both' }}
-      publish: ${{ inputs.publish || github.event_name == 'schedule' || github.event_name == 'push' }}
-    secrets:
-      id: 'none'
-      key: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up R
+        uses: r-lib/setup-r@v2
+        
+      - name: Install R system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev cmake
+          
+      - name: Install R packages
+        run: R -e 'install.packages(c("tidyverse", "arrow", "yaml", "ggplot2"), repos="http://cran.us.r-project.org")'
+        
+      - name: Run evaluation script
+        run: Rscript scripts/evaluate_forecasts.R
+        
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        
+      - name: Publish Quarto Dashboard
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

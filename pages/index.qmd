@@ -1,32 +1,45 @@
 ---
-title: "Introduction"
+title: "Multi-Disease Forecast Evaluation Dashboard"
+format:
+  html:
+    toc: true
+    page-layout: full
 ---
 
-This is a dashboard for Google's COVID-19, RSV and Influenza predictions for the 2025/26 season (November '25 to May '26).
+This dashboard tracks and evaluates Google's predictive model performance for **COVID-19**, **RSV**, and **Influenza** across the 2025/26 season (November '25 to May '26). 
 
-Source code for this dashboard was taken and adapted from the [Reich Lab](https://reichlab.io/) at UMass, Amherst, 
-who maintain current [FluSight Forecast Hub Dashboard](https://reichlab.io/flusight-dashboard/) and 
-[COVID-19 Forecast Hub Dashboard](https://reichlab.io/covidhub-dashboard/) for the models submitting to the CDC's 
-[Flusight Forecast Hub](https://github.com/cdcepi/FluSight-forecast-hub) and 
-[COVID-19 Forecast Hub](https://github.com/CDCgov/covid19-forecast-hub), respectively.
+Source code for this dashboard was originally inspired by the [Reich Lab](https://reichlab.io/) at UMass, Amherst. The target data for the three forecast hubs is hospitalizations due to each infection as reported to the National Healthcare Safety Network (NHSN), publicly available through the CDC.
 
-::: {style='display:flex; align-items: center; justify-content: center'}
+### Model Evaluations
 
-[View Google's Model Performance](forecast.html){.btn .btn-primary role="button"}
+Below you can explore the mean Weighted Interval Score (WIS) partitioned by forecast horizon for each disease. Lower WIS indicates higher forecast accuracy.
+
+::: {.panel-tabset}
+
+## COVID-19
+
+### Forecast Horizon Evaluation (WIS)
+![COVID-19 Mean WIS by Horizon](../_site/resources/evals/covid/wis_by_horizon.png){width=80%}
+
+[📥 Download Raw Data: COVID-19 WIS Table](../_site/resources/evals/covid/wis_by_horizon.csv)
+
+## Influenza (Flu)
+
+### Forecast Horizon Evaluation (WIS)
+![Flu Mean WIS by Horizon](../_site/resources/evals/flu/wis_by_horizon.png){width=80%}
+
+[📥 Download Raw Data: Flu WIS Table](../_site/resources/evals/flu/wis_by_horizon.csv)
+
+## RSV
+
+### Forecast Horizon Evaluation (WIS)
+![RSV Mean WIS by Horizon](../_site/resources/evals/rsv/wis_by_horizon.png){width=80%}
+
+[📥 Download Raw Data: RSV WIS Table](../_site/resources/evals/rsv/wis_by_horizon.csv)
 
 :::
 
-The target data for the three forecast hubs is hospitalizations due to each infection as reported to the National Healthcare Safety Network 
-(NHSN); this data is publicly available through the CDC's 
-[Weekly Hospital Respiratory Data (HRD) Metrics](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data)
- dataset.
-
-For the evaluations, and following the original Reich Lab dashboards, we have excluded predictions for two reference dates that were substantively impacted by NHSN reporting issues: 2024-11-23 and 2025-01-25.
-
 ::::{.callout-note}
-
-[The CDC notes](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data) that:
-
-> Data for reporting dates through April 30, 2024 represent data reported during a previous mandated reporting period as specified by the HHS Secretary. Data for reporting dates May 1, 2024--October 31, 2024 represent voluntarily reported data in the absence of a mandate. Data for reporting dates beginning November 1, 2024 represent data reported during a current mandated reporting period.
-
+**Data Context**:
+The CDC notes that data for reporting dates beginning November 1, 2024 represent data reported during a mandated reporting period, whereas preceding months represent voluntarily reported data. Two reference dates substantively impacted by NHSN reporting issues (2024-11-23 and 2025-01-25) have been marked as excluded from the core evaluation window.
 ::::
