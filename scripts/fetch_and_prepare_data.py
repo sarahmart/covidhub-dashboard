@@ -25,19 +25,32 @@ logger = logging.getLogger(__name__)
 
 
 def copy_forecast_files(disease: str, source_base: Path, dest_base: Path) -> int:
-    """Copy forecast files from source to destination, organized by disease and model.
+    """Copy forecast files from source to destination, organizing by disease and model.
+    
+    Hubverse expects forecasts in model-output/[model]/ structure.
+    Since multiple diseases have models with identical names (e.g., Google_SAI-Adapted_1),
+    we prefix model names with disease to avoid collisions: [disease]-[model].
+    
+    Files organized in:
+    - model-output/[disease]-[model]/ (for Hubverse evaluation)
+    - data/forecasts/[disease]/[model]/ (reference copy, organized by disease)
     
     Args:
         disease: Disease name (covid, rsv, flu)
         source_base: Source base path (data/cache/google_research/google-research/epi_forecasts/)
-        dest_base: Destination base path (data/forecasts/)
+        dest_base: Destination base path (repo root)
     
     Returns:
         Number of files copied
     """
     source_dir = source_base / f"{disease}_hub/model_output"
-    dest_dir = dest_base / disease
-    dest_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Two destination structures
+    forecasts_dir = dest_base / "data/forecasts" / disease
+    forecasts_dir.mkdir(parents=True, exist_ok=True)
+    
+    hubverse_dir = dest_base / "model-output"
+    hubverse_dir.mkdir(parents=True, exist_ok=True)
     
     files_copied = 0
     
@@ -46,12 +59,21 @@ def copy_forecast_files(disease: str, source_base: Path, dest_base: Path) -> int
         for model_dir in source_dir.iterdir():
             if model_dir.is_dir():
                 model_name = model_dir.name
-                model_dest = dest_dir / model_name
-                model_dest.mkdir(parents=True, exist_ok=True)
+                # Prefix with disease to avoid name collisions across diseases
+                prefixed_model_name = f"{disease}-{model_name}"
+                
+                # Copy to data/forecasts/[disease]/[model]/ (reference)
+                model_forecasts_dest = forecasts_dir / model_name
+                model_forecasts_dest.mkdir(parents=True, exist_ok=True)
+                
+                # Copy to model-output/[disease]-[model]/ (for Hubverse)
+                model_hubverse_dest = hubverse_dir / prefixed_model_name
+                model_hubverse_dest.mkdir(parents=True, exist_ok=True)
                 
                 for csv_file in model_dir.glob("*.csv"):
-                    dest_file = model_dest / csv_file.name
-                    shutil.copy2(csv_file, dest_file)
+                    # Copy to both locations
+                    shutil.copy2(csv_file, model_forecasts_dest / csv_file.name)
+                    shutil.copy2(csv_file, model_hubverse_dest / csv_file.name)
                     files_copied += 1
     
     return files_copied
@@ -77,7 +99,7 @@ def prepare_data():
             
             # Get forecast files and copy them
             source_base = Path("data/cache/google_research/google-research/epi_forecasts")
-            dest_base = Path("data/forecasts")
+            dest_base = Path(".")  # Repo root, so model-output/ and data/forecasts/ created at top level
             
             num_files = copy_forecast_files(disease, source_base, dest_base)
             
@@ -113,7 +135,8 @@ def prepare_data():
     
     logger.info("Data preparation complete!")
     logger.info("\nData organization:")
-    logger.info("  Forecasts: data/forecasts/[disease]/[model]/ (organized by disease and model)")
+    logger.info("  Forecasts (for Hubverse evaluation): model-output/[disease]-[model]/")
+    logger.info("  Forecasts (reference by disease): data/forecasts/[disease]/[model]/")
     logger.info("  Targets: data/targets/*.parquet")
     logger.info("\nReady for Hubverse R evaluation tools.")
 

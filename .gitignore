@@ -10,6 +10,7 @@ pages/evaluation.qmd
 data/cache/
 data/forecasts/
 data/targets/
+model-output/
 .venv/
 __pycache__/
 *.pyc
