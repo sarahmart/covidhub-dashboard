@@ -6,3 +6,8 @@ pages/forecasts.qmd
 pages/forecast.qmd
 pages/evaluations.qmd
 pages/evaluation.qmd
+# Data cache directories
+data/cache/
+.venv/
+__pycache__/
+*.pyc
